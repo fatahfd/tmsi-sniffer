@@ -28,8 +28,12 @@ import sys
 import getopt
 import signal
 
+import arfcnreference
+
 from lib.network import *
 from lib.log import *
+
+from decimal import Decimal
 
 class CommandLine:
 	def handle_rx_event(self):
@@ -48,12 +52,14 @@ class CommandLine:
 		self.write("  clear     clear screen\n")
 		self.write("  exit      shutdown server\n")
 		self.write("\n")
-		self.write("  rxtune    tunes slaves to a given frequency in kHz\n")
-		self.write("  paging    TMSI mapping\n")
-		self.write("  |  start  start recording\n")
-		self.write("  |  stop   stop recording\n")
-		self.write("  |  cross  show results\n")
-		self.write("  |  flush  reset all recordings\n")
+		self.write("  rxtune      tunes slaves to a given frequency in kHz\n")
+	        self.write("  rxarfcn     tunes slaves to a given ARFCN in GSM \n")
+                #self.write("  rxarfcn3g   tunes slaves to a given ARFCN in GSMUTMS \n")
+        	self.write("  paging ..   TMSI mapping\n")
+		self.write("  ..  start   start recording\n")
+		self.write("  ..  stop    stop recording\n")
+		self.write("  ..  cross   show results\n")
+		self.write("  ..  flush   reset all recordings\n")
 		self.write("\n")
 
 	def print_unknown(self):
@@ -82,6 +88,16 @@ class CommandLine:
 		# Server specific
 		elif cmd == "rxtune" and argc == 1:
 			app.server.broadcast("CMD RXTUNE %s\n" % argv[0])
+                elif cmd == "rxarfcn" and argc == 1:
+                        #print "arfcn gsm"
+                        arf_ref = arfcnreference.ArfcnReference()
+                        a = arf_ref.get_for_channel(argv[0])
+                        frq =  int(float(a["downlink"]) * 1000)
+                        #print(str(frq))
+                        print  "Freq = "+str(a["downlink"])+" Mhz ; band "+a["band"]
+                        app.server.broadcast("CMD RXTUNE %s\n" % str(frq))
+                #elif cmd == "rxarfcn3g" and argc == 1:
+                #        print "arfcn 3g"
 		elif cmd == "paging":
 			if argc == 1:
 				subcmd = argv[0]

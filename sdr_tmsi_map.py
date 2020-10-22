@@ -203,12 +203,13 @@ class ControlInterface(TCPClient):
 
 			result = self.app.tmsi_mgr.cross()
 			response = "CROSS Result:\n"
-			for tmsi in result.items:
-				response += "0x"
-				for x in tmsi:
-					response += "{:02x}".format(x)
-				response += "\n"
-
+                        if len(result) >  0 :
+			    for tmsi in result.items:
+			     	response += "0x"
+			    	for x in tmsi:
+			    		response += "{:02x}".format(x)
+			    	response += "\n"
+                        #response += "---- no item ---"
 			self.send(response)
 
 		elif self.verify_cmd(request, "FLUSH", 0):
