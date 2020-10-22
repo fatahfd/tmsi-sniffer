@@ -203,7 +203,7 @@ class ControlInterface(TCPClient):
 
 			result = self.app.tmsi_mgr.cross()
 			response = "CROSS Result:\n"
-                        if len(result) >  0 :
+                        if hasattr(result,'items') :
 			    for tmsi in result.items:
 			     	response += "0x"
 			    	for x in tmsi:
