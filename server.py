@@ -28,7 +28,8 @@ import sys
 import getopt
 import signal
 
-import arfcnreference
+#import arfcnreference
+import arfcn
 
 from lib.network import *
 from lib.log import *
@@ -53,7 +54,7 @@ class CommandLine:
 		self.write("  exit      shutdown server\n")
 		self.write("\n")
 		self.write("  rxtune      tunes slaves to a given frequency in kHz\n")
-	        self.write("  rxarfcn     tunes slaves to a given ARFCN in GSM \n")
+	        self.write("  rxarfcn     tunes slaves to a given ARFCN \n")
                 #self.write("  rxarfcn3g   tunes slaves to a given ARFCN in GSMUTMS \n")
         	self.write("  paging ..   TMSI mapping\n")
 		self.write("  ..  start   start recording\n")
@@ -90,11 +91,13 @@ class CommandLine:
 			app.server.broadcast("CMD RXTUNE %s\n" % argv[0])
                 elif cmd == "rxarfcn" and argc == 1:
                         #print "arfcn gsm"
-                        arf_ref = arfcnreference.ArfcnReference()
-                        a = arf_ref.get_for_channel(argv[0])
-                        frq =  int(float(a["downlink"]) * 1000)
+                        #arf_ref = arfcnreference.ArfcnReference()
+                        #a = arf_ref.get_for_channel(argv[0])
+                        #frq =  int(float(a["downlink"]) * 1000)
                         #print(str(frq))
-                        print  "Freq = "+str(a["downlink"])+" Mhz ; band "+a["band"]
+			frq = arfcn.arfcn2downlink(int(argv[0])) / 1000
+                        band =   arfcn.arfcn2band(int(argv[0]))
+                        print  "Freq = "+str(frq)+" Mhz ; band "+str(band)
                         app.server.broadcast("CMD RXTUNE %s\n" % str(frq))
                 #elif cmd == "rxarfcn3g" and argc == 1:
                 #        print "arfcn 3g"
